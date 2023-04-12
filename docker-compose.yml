@@ -1,0 +1,38 @@
+version: '3.4'
+
+# these were supposed to be used to make configuration easier
+# but ultimately I used env vars as a hack
+x-anchors:
+  R_VER: &r_ver 4.2.3
+  OWNER: &owner jaredlander
+  IMAGE_NAME: &image_name odsceast2023
+
+services:
+  rstudio_ml:
+    # this defines everything we need for building the image
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      # these args are used during build time
+      args:
+        # what our image is based on
+        BASE_IMAGE: ${BASE_IMAGE:-rocker/rstudio}
+        # the version of R we want
+        R_VER: ${R_VER:-4.2.3}
+        # the name of the image itself
+        IMAGE_NAME: ${IMAGE_NAME:-workshop}
+    # the full name and tag of the image
+    image: ${OWNER:-jaredlander}/${IMAGE_NAME:-workshop}:${R_VER:-4.2.3}
+    # this is the name that will appear when the image is running
+    container_name: rstudio_ml
+    # this let's us get all the env vars from the .env file
+    # for our purposes there is nothing sensitive in this file
+    # and nothing sensitive should be added since it is checked into git
+    env_file:
+      - .env
+    # allows us to expose a non-traditional port for RStudio
+    ports:
+      - ${RSTUDIO_PORT:-8787}:8787
+    # let's us save our work on the host machine
+    volumes:
+      - $PWD/workshop:/home/rstudio/workshop

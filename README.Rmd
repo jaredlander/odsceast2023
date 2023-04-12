@@ -1,0 +1,133 @@
+---
+output:
+    github_document:
+        toc: true
+params:
+  workshop_name: Machine Learning in R
+  workshop_url: https://odsc.com/speakers/machine-learning-in-r-part-i-ii/
+  organizer_name: ODSC East 2023
+  organizer_url: https://odsc.com/boston/
+  image_name: odsceast2023
+  image_tag: 4.2.3
+  github_username: jaredlander
+  github_slug: odsceast2023
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# `r params$workshop_name`
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+Thanks for attending my sessions at [`r params$organizer_name`](`r params$organizer_url`). This repo will hold code we write in [`r params$workshop_name`](`r params$workshop_url`) workshop.
+
+## Setup
+
+For this course you need a recent version of R. Anything greater than 4.0 is good but 4.2 is even better. I also highly recommend using your IDE/code editor of choice. Most people use either [RStudio](https://www.rstudio.com/products/rstudio/) or [VS Code](https://code.visualstudio.com/) with [R Language Extensions](https://code.visualstudio.com/docs/languages/r).
+
+After you have R and your favorite editor installed, you should install the packages needed today with the following line of code.
+
+```{r install-packages,eval=FALSE}
+install.packages(c(
+  'here', 'markdown', 'rmarkdown', 'knitr', 'tidyverse', 'ggthemes', 'ggridges', 
+  'tidymodels', 'coefplot', 'glmnet', 'xgboost', 'vip', 'DiagrammeR', 'here', 
+  'DBI', 'themis', 'vetiver', 'fable', 'tsibble', 'echarts4r', 'leaflet', 
+  'leafgl', 'leafem'
+))
+```
+
+## Git
+
+If you are comfortable with git, you can clone this repo and have the project structure.
+
+```sh
+git clone `r glue::glue("https://github.com/{params$github_username}/{params$github_slug}.git")`
+```
+
+
+## Docker
+
+If you are having trouble installing R or the packages, but are comfortable with Docker, you can pull the Docker image using the following command in your terminal.
+
+```sh
+docker pull `r glue::glue("jaredlander/{params$image_name}:{params$image_tag}")`
+```
+
+You can run the container with the following command which will also mount a folder as a volume for you to use.
+
+```sh
+docker run -it --rm --name rstudio_ml -e PASSWORD=password -e ROOT=true -p 8787:8787 -v $PWD/workshop:/home/rstudio/workshop  `r glue::glue("jaredlander/{params$image_name}:{params$image_tag}")`
+```
+
+```{sh,eval=FALSE,echo=FALSE,include=FALSE}
+# notes for building the docker image
+docker compose build
+docker --config ~/.config/docker/dockerhub push jaredlander/odsceast2023:4.2.3
+docker compose up
+```
+
+## Code
+
+Throughout the class I will be pushing code to this repo in case you need to catch up. Most, if not all, will be in the `code` folder.
+
+## Workshop Plan
+
+Modern statistics has become almost synonymous with machine learning, a collection of techniques that utilize today's incredible computing power. A combination of  supervised learning (regression-like models) and unsupervised learning (clustering), the field is supported by theory, yet relies upon intelligent programming for implementation.
+
+In this training session we will work through the entire process of training a machine learning model in R. Starting with the scaffolding of cross-validation, onto exploratory data analysis, feature engineering, model specification, parameter tuning and model selection. We then take the finished model and deploy it as an API in a Docker container for production use.
+
+We will make extensive use the `{tidymodels}` framework of R packages.
+
+### Preparing Data for the Modeling Process
+
+The first step in a modeling project is setting up the evaluation loop in order to properly define a model's performance. To accomplish this we will learn the following tasks:
+
+1. Load Data
+1. Create train and test sets from the data using the `{rsample}` package
+1. Create cross-validation set from the train set using the `{rsample}` package
+1. Define model evaluation metrics such as RMSE and logloss using the `{yardstick}` package
+
+### EDA and Feature Engineering
+
+Before we can fit a model we must first understand the model by performing exploratory data analysis. After that we prepare the data through feature engineering, also called preprocessing and data munging. The primary steps we will learn include:
+
+1. Perform summary EDA with `{dplyr}`
+1. Visualize the data with `{ggplot2}`
+1. Balance the data with the `{themis}` package
+1. Impute or otherwise mark missing data with the `{recipes}` package
+1. Perform data transformations with the `{recipes}` package
+    1. Numeric centering and scaling
+    1. Collapse noisy categorical data
+    1. Handle new categorical values
+    1. Convert categorical data into dummy (or indicator) variables
+
+### Model Fitting and Parameter Tuning
+
+Now we can begin fitting models. This involves defining the type of model, such as a penalized regression, random forest or boosted tree. This has been simplified thanks to the parsnip and workflows packages. Modern machine learning has essentially become an excercise in brute-forcing over tuning parameters, which we will do by combining the dials and tune package with the previously created cross-validation set.
+
+1. Define the model structure with the `{parsnip}` package
+1. Set tuning parameter candidates with the `{dials}` package
+1. Iterate over the tuning parameter candidates using the `{tune}` package to perform cross-validation
+1. Identify the best model fit with the `{yardstick}` package
+
+### Deploying the Model into Production
+
+After we build various machine learning models we need to make them accessible to others. We use the plumber package to expose our model as a REST API that can be hosted in a Docker container.
+
+1. Make predictions using the `{workflows}` package
+1. Convert the model to an API using the `{plumber}` package
+1. Bundle the model object and API code into a Docker container
+1. Serve that container and use curl to make perform predictions
+
+```{r downlit-linking,eval=FALSE,include=FALSE,echo=FALSE}
+downlit::downlit_md_path('README.md', 'README.md')
+```
+

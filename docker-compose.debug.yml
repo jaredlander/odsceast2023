@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  odsceast2023:
+    image: odsceast2023
+    build:
+      context: .
+      dockerfile: ./Dockerfile
