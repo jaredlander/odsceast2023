@@ -32,7 +32,9 @@
 			"requireLocalPort": true,
 			"onAutoForward": "ignore"
 		}
-	}
+	},
+	// Use 'postAttachCommand' to run commands after the container is started.
+	"postAttachCommand": "sudo rstudio-server start"
 
 	// Uncomment the next line if you want start specific services in your Docker Compose config.
 	// "runServices": [],
