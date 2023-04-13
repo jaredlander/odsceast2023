@@ -2,6 +2,7 @@
   - <a href="#setup" id="toc-setup">Setup</a>
   - <a href="#git" id="toc-git">Git</a>
   - <a href="#docker" id="toc-docker">Docker</a>
+  - <a href="#codespaces" id="toc-codespaces">Codespaces</a>
   - <a href="#code" id="toc-code">Code</a>
   - <a href="#workshop-plan" id="toc-workshop-plan">Workshop Plan</a>
     - <a href="#preparing-data-for-the-modeling-process"
@@ -58,6 +59,10 @@ You can run the container with the following command which will also mount a fol
 ``` sh
 docker run -it --rm --name rstudio_ml -e PASSWORD=password -e ROOT=true -p 8787:8787 -v $PWD/workshop:/home/rstudio/workshop  jaredlander/odsceast2023:4.2.3
 ```
+
+## Codespaces
+
+The Docker image should work natively in [GitHub Codespaces](https://github.com/features/codespaces) so you can run a remote instance of VS Code with all the packages ready to go. You can theoretically even launch RStudio from within the VS Code instance, though I haven’t figured that out yet.
 
 ## Code
 

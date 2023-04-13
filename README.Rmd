@@ -74,6 +74,10 @@ docker --config ~/.config/docker/dockerhub push jaredlander/odsceast2023:4.2.3
 docker compose up
 ```
 
+## Codespaces
+
+The Docker image should work natively in [GitHub Codespaces](https://github.com/features/codespaces) so you can run a remote instance of VS Code with all the packages ready to go. You can theoretically even launch RStudio from within the VS Code instance, though I haven't figured that out yet.
+
 ## Code
 
 Throughout the class I will be pushing code to this repo in case you need to catch up. Most, if not all, will be in the `code` folder.
