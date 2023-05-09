@@ -19,6 +19,8 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
   zlib1g-dev
 
 # this uses a predescribed set of packages to be baked into this image
+# this will install all the packages from the project into the root of the docker image
+# so any R session (that doesn't use renv) will have all the packages
 COPY renv.lock renv.lock
 RUN Rscript -e "install.packages('renv')"
 RUN Rscript -e "renv::restore()"

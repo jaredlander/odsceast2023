@@ -2,7 +2,6 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
 {
 	"name": "ML Workshop",
-	// "image": "docker.io/jaredlander/odsceast2023",
 
 	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
@@ -19,22 +18,23 @@
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/workshop",
+	// "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/workshop",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [8787],
+	"forwardPorts": ["8788:8787"],
 	"portsAttributes": {
-		"8787": {
+		"8788:8787": {
 			"label": "Rstudio",
 			"requireLocalPort": true,
 			"onAutoForward": "ignore"
 		}
-	},
+	}
+	//,
 	// Use 'postAttachCommand' to run commands after the container is started.
-	"postAttachCommand": "sudo rstudio-server start"
+	// "postAttachCommand": "sudo rstudio-server start"
 
 	// Uncomment the next line if you want start specific services in your Docker Compose config.
 	// "runServices": [],

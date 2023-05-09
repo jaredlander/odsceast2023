@@ -35,4 +35,8 @@ services:
       - ${RSTUDIO_PORT:-8787}:8787
     # let's us save our work on the host machine
     volumes:
-      - $PWD/workshop:/home/rstudio/workshop
+      - $PWD:/home/rstudio/${IMAGE_NAME:-workshop}
+      # we used to have to map to the workshop folder when using the image locally
+      # but by not running renv/activate.R if we're in a container, we can now mount the root project folder as a volume without a problem
+      # keeping this here just in case for the first time we're using it live
+      # - $PWD/workshop:/home/rstudio/workshop
