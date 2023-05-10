@@ -292,3 +292,79 @@ val1 |> collect_metrics()
 val2 |> collect_metrics()
 ```
 
+# Tuning
+
+Still using `{tune}`
+
+```{r}
+spec3 <- boost_tree(
+    'classification',
+    trees=tune(),
+    tree_depth=tune(),
+    sample_size=0.8
+) |> 
+    set_engine('xgboost')
+
+spec3
+```
+
+```{r}
+rec3 <- recipe(Status ~ ., data=train) |> 
+    # not really needed for xgboost, but good for 
+    # other methods
+    themis::step_downsample(Status, under_ratio=1.2) |> 
+    step_nzv(all_predictors()) |> 
+    step_filter_missing(
+        all_predictors(), 
+        threshold=tune()
+    ) |> 
+    step_unknown(
+        all_nominal_predictors(), 
+        new_level='missing'
+    ) |> 
+    step_impute_knn(all_numeric_predictors()) |> 
+    step_normalize(all_numeric_predictors()) |> 
+    # step_center() |> step_scale() |> 
+    step_other(all_nominal_predictors(), other='misc') |> 
+    step_novel(
+        all_nominal_predictors(), new_level='unseen'
+    ) |> 
+    step_dummy(
+        all_nominal_predictors(), 
+        one_hot=TRUE
+    )
+
+rec3
+```
+
+```{r}
+flow3 <- workflow() |> 
+    add_recipe(rec3) |> 
+    add_model(spec3)
+
+flow3
+```
+
+```{r}
+params <- flow3 |> hardhat::extract_parameter_set_dials()
+params$object
+```
+
+
+```{r}
+library(dials)
+
+params3 <- params |> 
+    update(
+        trees=trees(c(50, 500)),
+        tree_depth=tree_depth(c(2, 6)),
+        threshold=threshold(c(0.4, 1))
+    )
+params3$object
+```
+
+```{r}
+grid3 <- grid_latin_hypercube(x=params3, size=150)
+grid3
+```
+
