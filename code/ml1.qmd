@@ -1,0 +1,78 @@
+---
+title: ML in R
+author: Jared P. Lander
+date: today
+date-format: long
+format:
+    html: 
+      toc: true
+      number-sections: true
+---
+
+# Data
+
+```{r}
+data(credit_data, package='modeldata')
+
+credit <- tibble::as_tibble(credit_data)
+credit
+```
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+fake_customers <- credit |> 
+    select(-Status) |> 
+    slice_sample(n=10)
+fake_customers
+```
+
+Split the data
+
+```{r}
+library(rsample)
+
+set.seed(37)
+data_split <- initial_split(
+    credit, 
+    prop=0.8,
+    strata='Status'
+)
+data_split
+
+train <- training(data_split)
+test <- testing(data_split)
+
+train
+test
+```
+
+# EDA
+
+Now we use our favorite packages, `{dplyr}` and `{ggplot2}`
+
+```{r}
+library(ggplot2)
+ggplot(train, aes(x=Status)) + geom_bar()
+```
+
+There are a lot more good than bad, could be a problem
+
+```{r}
+train |> count(Status)
+```
+
+```{r}
+ggplot(train, aes(x=Amount, y=Age, color=Status)) + 
+    geom_point()
+```
+
+```{r}
+library(corrr)
+correlate(train)
+correlate(train) |> autoplot()
+correlate(train) |> network_plot()
+```
+
