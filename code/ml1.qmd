@@ -7,6 +7,7 @@ format:
     html: 
       toc: true
       number-sections: true
+      code-link: true
 ---
 
 # Data
@@ -163,7 +164,7 @@ linear_reg() |> set_engine('spark')
 
 rand_forest() |> set_engine('randomForest')
 rand_forest() |> set_engine('ranger')
-rand_forest() |> set_engine('keras')
+rand_forest() |> set_engine('spark')
 
 boost_tree() |> set_engine('xgboost')
 boost_tree(mode='classification') |> set_engine('xgboost')
@@ -184,5 +185,110 @@ spec1
 
 ```{r}
 library(workflows)
+```
+
+```{r}
+flow1 <- workflow(preprocessor=rec1, spec=spec1)
+flow1 <- workflow() |> 
+    add_recipe(rec1) |> 
+    add_model(spec1)
+
+flow1
+```
+
+```{r}
+fit1 <- fit(flow1, data=train)
+fit1
+
+# xgboost::xgb.train(
+#     data=xgboost::xgb.DMatrix(
+#         x_matrix, label=y_matrix
+#     ),
+#     nrounds=100, 
+#     max_depth=4
+# )
+```
+
+
+```{r}
+fit1 |> summary()
+fit1 |> extract_fit_engine() |> vip::vip()
+```
+
+```{r}
+spec2 <- boost_tree(
+    'classification', 
+    trees=400, 
+    tree_depth=4
+) |> 
+    set_engine('xgboost')
+
+flow2 <- flow1 |> update_model(spec2)
+flow2
+
+fit2 <- fit(flow2, data=train)
+fit2 |> extract_fit_engine() |> vip::vip()
+```
+
+# Evaluate the Model
+
+Regression:
+
+- root mean squared error
+- mean absolute error
+
+Classification
+
+- accuracy
+- log loss
+- AUC
+
+
+```{r}
+library(yardstick)
+
+loss_fn <- metric_set(roc_auc)
+loss_fn
+```
+
+# Cross-Validation
+
+Still using `{rsample}`
+
+```{r}
+set.seed(18002)
+theCV <- vfold_cv(
+    data=train, 
+    v=5, 
+    repeats=1, 
+    strata='Status'
+)
+
+theCV
+theCV$splits
+theCV$splits[[1]] |> training()
+```
+
+```{r}
+library(tune)
+val1 <- fit_resamples(
+    flow1, 
+    resamples=theCV, 
+    metrics=loss_fn
+)
+
+val2 <- fit_resamples(
+    flow2, 
+    resamples=theCV, 
+    metrics=loss_fn
+)
+
+val1
+val2
+val2$.metrics[[1]]
+val2$.metrics[[2]]
+
+val1 |> collect_metrics()
+val2 |> collect_metrics()
 ```
 
