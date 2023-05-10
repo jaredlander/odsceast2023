@@ -147,3 +147,4 @@ rec1 |> prep() |> bake(new_data=NULL)
 ```
 
 
+# Definte the Model
