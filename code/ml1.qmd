@@ -76,3 +76,38 @@ correlate(train) |> autoplot()
 correlate(train) |> network_plot()
 ```
 
+# Feature Engineering
+
+Outcome:
+
+- target
+- response
+- class
+- y
+- label
+- dependent variable
+
+Input:
+
+- independent variable
+- features
+- x
+- covariates
+
+coefficients == weights (ML)
+
+intercept == bias
+
+inverse logit == sigmoid
+
+Dummy variables == indicator variables == one hot encoded
+
+```{r}
+train |> count(Home)
+
+train |> select(Home)
+
+train |> select(Home) |> head(n=10) |> 
+    model.matrix( ~ Home, data=_)
+```
+
