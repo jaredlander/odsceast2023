@@ -472,3 +472,70 @@ last3 <- last_fit(
 last3$.metrics[[1]]
 ```
 
+# Fit Model on All Data
+
+```{r}
+final_fit <- fit(mod3, data=credit)
+final_fit
+```
+
+```{r}
+fake_customers[1, ]
+
+predict(final_fit, new_data=fake_customers[1, ])
+predict(final_fit, new_data=fake_customers[1, ], type='prob')
+predict(final_fit, new_data=fake_customers[2, ], type='prob')
+predict(final_fit, new_data=fake_customers[3, ], type='prob')
+predict(final_fit, new_data=fake_customers[4, ], type='prob')
+
+predict(final_fit, new_data=fake_customers, type='prob')
+```
+
+# Deploy Model
+
+```{r}
+library(vetiver)
+
+library(pins)
+
+model_board <- board_folder(
+  here::here('models'),
+  versioned=TRUE
+)
+```
+
+```{r}
+v3 <- vetiver_model(
+  final_fit,
+  model_name='credit_best',
+  description='Perfect Credit Scoring Model'
+)
+
+v3
+
+vetiver_pin_write(board=model_board, vetiver_model=v3)
+vetiver_pin_read(board=model_board, name='credit_best')
+pin_list(model_board)
+pin_versions(model_board, name='credit_best')
+```
+
+```{r eval=FALSE}
+library(plumber)
+
+pr() |> 
+  vetiver_api(v3) |> 
+  pr_run(host='0.0.0.0', port='8002')
+```
+
+```{r}
+vetiver_prepare_docker(
+  board=model_board,
+  name='credit_best',
+  path=here::here()
+)
+```
+
+```{r}
+connect_board <- board_connect()
+```
+
