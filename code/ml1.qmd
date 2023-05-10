@@ -147,4 +147,42 @@ rec1 |> prep() |> bake(new_data=NULL)
 ```
 
 
-# Definte the Model
+# Define the Model
+
+xgboost
+
+```{r}
+library(parsnip)
+
+linear_reg()
+linear_reg() |> set_engine('lm')
+linear_reg() |> set_engine('glmnet')
+linear_reg() |> set_engine('stan')
+linear_reg() |> set_engine('keras')
+linear_reg() |> set_engine('spark')
+
+rand_forest() |> set_engine('randomForest')
+rand_forest() |> set_engine('ranger')
+rand_forest() |> set_engine('keras')
+
+boost_tree() |> set_engine('xgboost')
+boost_tree(mode='classification') |> set_engine('xgboost')
+```
+
+```{r}
+spec1 <- boost_tree(
+    mode='classification',
+    trees=100,
+    tree_depth=4
+) |> 
+    set_engine('xgboost')
+spec1
+```
+
+
+# Workflows
+
+```{r}
+library(workflows)
+```
+
