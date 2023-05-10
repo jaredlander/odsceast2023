@@ -404,3 +404,71 @@ tuned3 <- tune_grid(
 toc(log=TRUE)
 ```
 
+```{r}
+tuned3
+
+tuned3$.metrics[[1]]
+
+
+tuned3 |> collect_metrics()
+
+tuned3 |> autoplot()
+```
+
+```{r}
+tuned3 |> show_best(n=10)
+
+tuned3 |> select_best()
+tuned3 |> select_by_one_std_err(trees, tree_depth)
+
+
+best_params_3 <- tuned3 |> 
+  select_by_one_std_err(trees, tree_depth)
+best_params_3
+```
+
+# Refit Model
+
+```{r}
+flow3
+
+mod3 <- flow3 |> finalize_workflow(parameters=best_params_3)
+mod3
+```
+
+```{r}
+fit3 <- mod3 |> fit(data=train)
+fit3
+
+fit3 |> extract_fit_engine() |> vip::vip()
+```
+
+# Evaluate with Test Data
+
+```{r}
+preds3 <- predict(fit3, new_data=test)
+preds3
+
+predict(fit3, new_data=test, type='prob')
+preds3_prob <- predict(fit3, new_data=test, type='prob')
+preds3_prob
+```
+
+```{r}
+combined3 <- test |> 
+  select(Status) |> 
+  bind_cols(preds3_prob)
+combined3
+
+roc_auc(combined3, truth=Status, estimate=.pred_bad)
+```
+
+```{r}
+last3 <- last_fit(
+  object=mod3, 
+  split=data_split#, 
+  # metrics=loss_fn
+)
+last3$.metrics[[1]]
+```
+
