@@ -364,7 +364,43 @@ params3$object
 ```
 
 ```{r}
+set.seed(99)
 grid3 <- grid_latin_hypercube(x=params3, size=150)
 grid3
+
+grid3 <- grid3 |> 
+  mutate(threshold=round(threshold, digits=2))
+```
+
+```{r}
+# options(tidymodels.dark=TRUE)
+```
+
+```{r}
+library(tictoc)
+```
+
+```{r}
+library(parallel)
+library(doFuture)
+registerDoFuture()
+cl <- makeCluster(6)
+plan(cluster, workers = cl)
+```
+
+
+```{r}
+tic(msg='tuning 3')
+tuned3 <- tune_grid(
+  flow3,
+  resamples=theCV,
+  grid=grid3,
+  metrics=loss_fn,
+  control=control_grid(
+    verbose=TRUE,
+    allow_par=TRUE
+  )
+)
+toc(log=TRUE)
 ```
 
