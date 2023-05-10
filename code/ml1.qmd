@@ -93,6 +93,7 @@ Input:
 - features
 - x
 - covariates
+- predictor
 
 coefficients == weights (ML)
 
@@ -110,4 +111,39 @@ train |> select(Home)
 train |> select(Home) |> head(n=10) |> 
     model.matrix( ~ Home, data=_)
 ```
+
+`{recipes}`
+
+```{r}
+library(recipes)
+
+rec1 <- recipe(Status ~ ., data=train) |> 
+    # not really needed for xgboost, but good for 
+    # other methods
+    themis::step_downsample(Status, under_ratio=1.2) |> 
+    step_nzv(all_predictors()) |> 
+    step_filter_missing(all_predictors(), threshold=.5) |> 
+    step_unknown(
+        all_nominal_predictors(), 
+        new_level='missing'
+    ) |> 
+    step_impute_knn(all_numeric_predictors()) |> 
+    step_normalize(all_numeric_predictors()) |> 
+    # step_center() |> step_scale() |> 
+    step_other(all_nominal_predictors(), other='misc') |> 
+    step_novel(
+        all_nominal_predictors(), new_level='unseen'
+    ) |> 
+    step_dummy(
+        all_nominal_predictors(), 
+        one_hot=TRUE
+    )
+
+rec1
+
+rec1 |> prep()
+rec1 |> prep() |> bake(new_data=NULL)
+# rec1 |> prep() |> bake(new_data=NULL) |> View()
+```
+
 
