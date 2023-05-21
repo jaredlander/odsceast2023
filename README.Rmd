@@ -40,7 +40,7 @@ install.packages(c(
   'here', 'markdown', 'rmarkdown', 'knitr', 'tidyverse', 'ggthemes', 'ggridges', 
   'tidymodels', 'coefplot', 'glmnet', 'xgboost', 'vip', 'DiagrammeR', 'here', 
   'DBI', 'themis', 'vetiver', 'fable', 'tsibble', 'echarts4r', 'leaflet', 
-  'leafgl', 'leafem'
+  'leafgl', 'leafem', 'tictoc'
 ))
 ```
 
