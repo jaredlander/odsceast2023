@@ -1,0 +1,10 @@
+file: credit_best.rds
+file_size: 49101
+pin_hash: bbe11b2e26c2c062
+type: rds
+title: 'credit_best: a pinned list'
+description: Perfect Credit Scoring Model
+tags: ~
+created: 20230510T200945Z
+api_version: 1.0
+user: []
